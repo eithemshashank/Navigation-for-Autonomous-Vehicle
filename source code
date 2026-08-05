@@ -1,0 +1,77 @@
+1.	Training Object Detection Model  from ultralytics import YOLO 
+ 
+# Load YOLOv8 pre-trained model model = YOLO("yolov8n.pt") 
+ 
+# Train the detection model model.train(     data="dataset/data.yaml",     epochs=50,     imgsz=640,     batch=16,     name="object_detection_model" 
+) 
+ 
+ 
+2.	Testing Object Detection Model  from ultralytics import YOLO 
+ 
+# Load trained model model = 
+YOLO("runs/detect/object_detection_model/weights
+/best.pt") 
+ 
+# Test the model results = model.predict(     source="test_images/",     save=True,     conf=0.5 
+) 
+ 
+ 
+3.	Training Road Segmentation Model  from ultralytics import YOLO 
+ 
+# Load YOLOv8 segmentation model model = YOLO("yolov8n-seg.pt") 
+ 
+# Train segmentation model model.train(     data="seg_dataset/data.yaml",     epochs=50,     imgsz=640, 
+     batch=16,     name="road_segmentation_model" 
+) 
+ 
+ 
+4.	Testing Road Segmentation Model  from ultralytics import YOLO 
+ 
+# Load trained segmentation model model = 
+YOLO("runs/segment/road_segmentation_model/weigh ts/best.pt") 
+ 
+# Test segmentation model results = model.predict(     source="test_images/",     save=True,     conf=0.5 
+) 
+ 
+ 
+5.	Final Integrated Code  import cv2 
+import numpy as np 
+ from ultralytics import YOLO 
+ 
+# Load trained models det_model = 
+YOLO("runs/detect/object_detection_model/weights
+/best.pt") seg_model = 
+YOLO("runs/segment/road_segmentation_model/weigh ts/best.pt") 
+ 
+# Open video/camera cap = cv2.VideoCapture("test_video.mp4") 
+ while cap.isOpened(): 
+    ret, frame = cap.read()     if not ret:         break 
+ 
+    # Object Detection     detection_results = det_model(frame)     direction = "FORWARD" 
+     for result in detection_results: 
+        boxes = result.boxes 
+        for box in boxes: 
+            cls_id = int(box.cls[0]) 
+             conf = float(box.conf[0]) 
+             if conf > 0.5: 
+                label = det_model.names[cls_id] 
+                 if label.lower() == "stop":direction = "STOP"                 
+                    elif label.lower() == "left": direction = "LEFT"                 
+                      elif label.lower() == "right": direction = "RIGHT"                 
+                          elif label.lower() == "forward": direction = "FORWARD" 
+                 x1, y1, x2, y2 = map(int, box.xyxy[0]) 
+                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)                 
+                  cv2.putText(frame, label, (x1, y1 - 10),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2) 
+ 
+     
+# Road Segmentation     seg_results = seg_model(frame)     combined = frame.copy() 
+     for result in seg_results:         if result.masks is not None:             for mask in result.masks.data:                 mask = mask.cpu().numpy()                 mask = cv2.resize(mask, 
+(frame.shape[1], frame.shape[0]))                 mask = (mask * 255).astype(np.uint8) 
+                 blue_mask = np.zeros_like(frame)                 blue_mask[:, :, 0] = mask 
+                 combined = cv2.addWeighted(combined, 
+1, blue_mask, 0.3, 0) 
+ 
+    # Display Direction     cv2.putText(combined, f"Direction: {direction}", 
+(50, 50),                 cv2.FONT_HERSHEY_SIMPLEX, 1, 
+                (0, 0, 255), 3)      cv2.imshow("Autonomous Vehicle Navigation", combined)      if cv2.waitKey(1) & 0xFF == ord('q'): 
+        break  cap.release() cv2.destroyAllWindows() 
