@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+runs/
+dataset/
+seg_dataset/
+test_images/
+*.pt
+*.mp4
