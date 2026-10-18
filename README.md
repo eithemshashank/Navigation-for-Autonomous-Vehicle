@@ -2,6 +2,8 @@
 
 A computer-vision project that runs two YOLOv8 models on a video and shows a navigation command (STOP, LEFT, RIGHT or FORWARD) on screen, with the road area highlighted.
 
+B.E. final-year team project (2 members), MVSR Engineering College, 2025-26.
+
 **Tech:** Python, YOLOv8 (Ultralytics), OpenCV, NumPy
 
 ![Example output: detected car and people, road area in purple, command FORWARD](docs/example_output.jpg)
