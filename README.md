@@ -44,14 +44,14 @@ From the project report (B.E. final-year project, MVSR Engineering College, 2025
 - **Detection:** a custom dataset of annotated traffic-sign images (STOP, LEFT, RIGHT, FORWARD) in YOLO format, labelled with LabelImg.
 - **Segmentation:** a road-segmentation dataset of road images with masks.
 - **Size:** around 2,000+ training images and 500+ test images/video frames.
-- **Testing:** 14 manual test cases (detection, segmentation, decision logic, integration) all passed. Accuracy figures such as mAP and FPS were not recorded, so none are claimed here.
+- **Testing:** 14 manual test cases (detection, segmentation, decision logic, integration) all passed. **Accuracy:** the training and testing notebook reported an mAP50 of 87%. The notebook is not stored in this repository, and FPS was not measured.
 
 ## Limitations
 
 - The command comes only from the detection labels. The segmentation result is shown as an overlay and does not change the command.
 - It does not measure distance or judge where an obstacle is relative to the vehicle's path.
 - It is a demonstration on recorded video, not a tested driving system.
-- No accuracy figures are included in this repository yet.
+- The 87% mAP50 comes from the team's notebook output, which is not included here, so it cannot be re-checked from this repository.
 
 ## Author
 
